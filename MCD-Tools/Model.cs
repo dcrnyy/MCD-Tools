@@ -31,6 +31,8 @@ namespace MCD_Tools
         ///  验证码图片base64
         /// </summary>
         public string verifyCode { get; set; }
+
+        public string Code { get; set; }
     }
 
 
@@ -52,7 +54,7 @@ namespace MCD_Tools
         /// <summary>
         /// 
         /// </summary>
-        public string basReservationNumberDate { get; set; }
+        public long basReservationNumberDate { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -73,5 +75,12 @@ namespace MCD_Tools
         /// 
         /// </summary>
         public int verifyCodeId { get; set; }
+    }
+
+    public class PostResult
+    {
+        public int code { get; set; }
+        public string msg { get; set; }
+        public object data { get; set; }
     }
 }
