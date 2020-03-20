@@ -38,16 +38,12 @@
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.tbLog = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.lvRead = new System.Windows.Forms.ListView();
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lbCount = new System.Windows.Forms.Label();
             this.lbTime = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.tbOK = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // lvParam
@@ -62,10 +58,11 @@
             this.lvParam.Location = new System.Drawing.Point(12, 12);
             this.lvParam.MultiSelect = false;
             this.lvParam.Name = "lvParam";
-            this.lvParam.Size = new System.Drawing.Size(460, 313);
+            this.lvParam.Size = new System.Drawing.Size(471, 451);
             this.lvParam.TabIndex = 0;
             this.lvParam.UseCompatibleStateImageBehavior = false;
             this.lvParam.View = System.Windows.Forms.View.Details;
+            this.lvParam.DoubleClick += new System.EventHandler(this.lvParam_DoubleClick);
             // 
             // columnHeader1
             // 
@@ -106,10 +103,11 @@
             // 
             // tbLog
             // 
-            this.tbLog.Location = new System.Drawing.Point(12, 331);
+            this.tbLog.Location = new System.Drawing.Point(489, 253);
             this.tbLog.Multiline = true;
             this.tbLog.Name = "tbLog";
-            this.tbLog.Size = new System.Drawing.Size(614, 265);
+            this.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbLog.Size = new System.Drawing.Size(608, 293);
             this.tbLog.TabIndex = 4;
             // 
             // button1
@@ -121,42 +119,6 @@
             this.button1.Text = "准  备";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // lvRead
-            // 
-            this.lvRead.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader5,
-            this.columnHeader6,
-            this.columnHeader7,
-            this.columnHeader8});
-            this.lvRead.FullRowSelect = true;
-            this.lvRead.GridLines = true;
-            this.lvRead.Location = new System.Drawing.Point(632, 12);
-            this.lvRead.MultiSelect = false;
-            this.lvRead.Name = "lvRead";
-            this.lvRead.Size = new System.Drawing.Size(456, 584);
-            this.lvRead.TabIndex = 6;
-            this.lvRead.UseCompatibleStateImageBehavior = false;
-            this.lvRead.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "排序";
-            // 
-            // columnHeader6
-            // 
-            this.columnHeader6.Text = "姓名";
-            this.columnHeader6.Width = 93;
-            // 
-            // columnHeader7
-            // 
-            this.columnHeader7.Text = "日期";
-            this.columnHeader7.Width = 121;
-            // 
-            // columnHeader8
-            // 
-            this.columnHeader8.Text = "验证码";
-            this.columnHeader8.Width = 169;
             // 
             // lbCount
             // 
@@ -193,15 +155,24 @@
             this.timer2.Interval = 1000;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
+            // tbOK
+            // 
+            this.tbOK.Location = new System.Drawing.Point(622, 12);
+            this.tbOK.Multiline = true;
+            this.tbOK.Name = "tbOK";
+            this.tbOK.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbOK.Size = new System.Drawing.Size(475, 232);
+            this.tbOK.TabIndex = 11;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1100, 604);
+            this.ClientSize = new System.Drawing.Size(1109, 604);
+            this.Controls.Add(this.tbOK);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.lbTime);
             this.Controls.Add(this.lbCount);
-            this.Controls.Add(this.lvRead);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tbLog);
             this.Controls.Add(this.dateTimePicker1);
@@ -226,16 +197,12 @@
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.TextBox tbLog;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ListView lvRead;
-        private System.Windows.Forms.ColumnHeader columnHeader5;
-        private System.Windows.Forms.ColumnHeader columnHeader6;
-        private System.Windows.Forms.ColumnHeader columnHeader7;
-        private System.Windows.Forms.ColumnHeader columnHeader8;
         private System.Windows.Forms.Label lbCount;
         private System.Windows.Forms.Label lbTime;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.TextBox tbOK;
     }
 }
 

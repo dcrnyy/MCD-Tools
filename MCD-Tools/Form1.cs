@@ -24,21 +24,26 @@ namespace MCD_Tools
         private List<MemberParam> memberList = new List<MemberParam>
         {
             new MemberParam{Name="韦大宏",Phone="19654783325",IdNumber="110101199003076931"},
+            new MemberParam{Name="张三",Phone="19654783325",IdNumber="110101199003076931"},
+            new MemberParam{Name="李四",Phone="19654783325",IdNumber="110101199003076931"},
+            new MemberParam{Name="王五",Phone="19654783325",IdNumber="110101199003076931"},
+            new MemberParam{Name="马六",Phone="19654783325",IdNumber="110101199003076931"},
 
         };
+        private List<string> okList = new List<string>();
         private List<VerifyCodeData> verifyList = null;
+
+        /// <summary>
+        /// 获取的验证码数量
+        /// </summary>
+        private int count = 0;
+
+        DateTime dt;
 
         private void MainForm_Load(object sender, EventArgs e)
         {
             try
             {
-                //StreamReader sr = new StreamReader("Param.txt", Encoding.Default);
-                //var json = sr.ReadToEnd();
-                //sr.Close();
-                //sr.Dispose();
-
-                //memberList = JsonHelper.DeserializeObject<List<MemberParam>>(json);
-
                 lvParam.Items.Clear();
                 for (int n = 0; n < memberList.Count; n++)
                 {
@@ -50,6 +55,7 @@ namespace MCD_Tools
                     lvi.Tag = item;
                     lvParam.Items.Add(lvi);
                 }
+                count = memberList.Count * 5 * 50;
 
             }
             catch (Exception ex)
@@ -63,24 +69,33 @@ namespace MCD_Tools
         {
 
             //var dt = dateTimePicker1.Value;
-            Read(1);
+            Read(count);
         }
 
         private void Read(int count)
         {
             //验证码有效时间3分钟
-            verifyList = new List<VerifyCodeData>();
-            for (int n = 0; n < count; n++)
+            try
             {
-                new Task(() =>
+                verifyList = new List<VerifyCodeData>();
+                for (int n = 0; n < count; n++)
                 {
-                    var obj = GetVerifyCode();
-                    if (obj != null)
+                    new Task(() =>
                     {
-                        obj.Code = ttshituAPI.GetCode(obj.verifyCode);
-                        verifyList.Add(obj);
-                    }
-                }).Start();
+                        verifyList.Add(new VerifyCodeData { verifyCode = Guid.NewGuid().ToString() });
+                        button1.Text = $"准  备({verifyList.Count})";
+                        //var obj = GetVerifyCode();
+                        //if (obj != null)
+                        //{
+                        //    obj.Code = ttshituAPI.GetCode(obj.verifyCode);
+                        //    verifyList.Add(obj);
+                        //}
+                    }).Start();
+                }
+            }
+            catch (Exception ex)
+            {
+
             }
         }
 
@@ -89,108 +104,84 @@ namespace MCD_Tools
         {
             lock (lockObj)
             {
-                if (verifyList != null)
-                    return verifyList.FirstOrDefault();
-                return null;
+                try
+                {
+                    if (verifyList != null && verifyList.Count > 0)
+                    {
+                        var obj = verifyList.FirstOrDefault();
+                        verifyList.Remove(obj);
+                        button1.Text = $"准  备({verifyList.Count})";
+                        return obj;
+                    }
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
             }
-        }
-        private void Read(DateTime dt)
-        {
-            //int num = 10;//每天次数
-            //System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1)); // 当地时区
-
-            //int count = 0;
-            //lvRead.Items.Clear();
-            //taskList = new List<TaskParam>();
-            //for (int x = 0; x < 5; x++)
-            //{
-
-            //    var ndt = dt.AddDays(x + 1);
-            //    long stamp = (long)(ndt.Date - startTime).TotalMilliseconds; // 相差毫秒数
-            //    var timeStamp = stamp.ToString();
-            //    for (int n = 0; n < lvParam.Items.Count; n++)
-            //    {
-            //        VerifyCodeData verifyCode = null;
-            //        do
-            //        {
-            //            try
-            //            {
-            //                //verifyCode = GetVerifyCode();
-            //                verifyCode = new VerifyCodeData { id = 999 };
-            //            }
-            //            catch (Exception ex)
-            //            {
-
-            //            }
-            //        } while (verifyCode == null);
-            //        // var code = ttshituAPI.GetCode(verifyCode.verifyCode);
-            //        var code = "1234";
-
-            //        var obj = lvParam.Items[n].Tag as MemberParam;
-            //        count++;
-            //        var postParam = new PostParam
-            //        {
-            //            basReservationNumberDate = timeStamp.ToString(),
-            //            basReservationNumberIdcard = obj.IdNumber,
-            //            basReservationNumberName = obj.Name,
-            //            basReservationNumberPhone = obj.Phone,
-            //            verifyCodeId = verifyCode.id,
-            //            verifyCode = code,
-            //        };
-            //        taskList.Add(new TaskParam
-            //        {
-            //            Name = count + "--" + obj.Name,
-            //            Param = JsonHelper.Serializer(postParam),
-            //        });
-
-            //        var lvi = new ListViewItem(count + "");
-            //        lvi.SubItems.Add(obj.Name);
-            //        lvi.SubItems.Add(ndt.ToShortDateString());
-            //        lvi.SubItems.Add(code);
-            //        lvRead.Items.Add(lvi);
-            //    }
-
-            //}
-            //lbCount.Text = $"{lvParam.Items.Count}人，总任务数：" + count;
         }
 
         private void btStart_Click(object sender, EventArgs e)
         {
-            var dt = dateTimePicker1.Value;
+            dt = dateTimePicker1.Value;
+            timer2.Interval = 120; //一秒钟大概7~8次
+            timer2.Start();
+
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+
             foreach (var item in memberList)
             {
+                if (okList.Contains(item.Name))
+                    continue;
+
+                if (verifyList == null && verifyList.Count == 0)
+                    return;
                 new Task(() =>
                 {
                     var verify = GetVerifyCodeData();
-                    Start(item, verify, dt.AddDays(1).Date);
+                    if (verify != null)
+                    {
+                        Start(item, verify, dt.AddDays(1).Date);
+                    }
                 }).Start();
-                //    new Task(() =>
-                //    {
-                //        var verify = GetVerifyCodeData();
-                //        Start(item, verify, dt.AddDays(2).Date);
-                //    }).Start();
-                //    new Task(() =>
-                //    {
-                //        var verify = GetVerifyCodeData();
-                //        Start(item, verify, dt.AddDays(3).Date);
-                //    }).Start();
-                //    new Task(() =>
-                //    {
-                //        var verify = GetVerifyCodeData();
-                //        Start(item, verify, dt.AddDays(4).Date);
-                //    }).Start();
-                //    new Task(() =>
-                //    {
-                //        var verify = GetVerifyCodeData();
-                //        Start(item, verify, dt.AddDays(5).Date);
-                //    }).Start();
+                new Task(() =>
+                {
+                    var verify = GetVerifyCodeData();
+                    if (verify != null)
+                    {
+                        Start(item, verify, dt.AddDays(2).Date);
+                    }
+                }).Start();
+                new Task(() =>
+                {
+                    var verify = GetVerifyCodeData();
+                    if (verify != null)
+                    {
+                        Start(item, verify, dt.AddDays(3).Date);
+                    }
+                }).Start();
+                new Task(() =>
+                {
+                    var verify = GetVerifyCodeData();
+                    if (verify != null)
+                    {
+                        Start(item, verify, dt.AddDays(4).Date);
+                    }
+                }).Start();
+                new Task(() =>
+                {
+                    var verify = GetVerifyCodeData();
+                    if (verify != null)
+                    {
+                        Start(item, verify, dt.AddDays(5).Date);
+                    }
+                }).Start();
             }
-        }
-
-        private void Log(string msg)
-        {
-            tbLog.Text = $"{msg}\r\n{tbLog.Text}";
-            //tbLog.Text = $"{DateTime.Now.ToString("HH:mm:ss")}--{result}----提交参数：{param.Name}-{dt.ToString("yyyy-MM-dd")} \r\n" + tbLog.Text;
+            //Log("End");
         }
 
 
@@ -201,7 +192,14 @@ namespace MCD_Tools
         {
             try
             {
-                Console.WriteLine(dt.Date + " jjj");
+                var json = "{\"code\":1016,\"msg\":\"今日预约已达上限\",\"data\":null}";
+                Log($"{memberParam.Name}--{json}");
+                var msg2 = dt + $" {memberParam.Name}：{json}";
+                SetOKtb(msg2, dt);
+                return;
+
+
+                var dtStr = dt.ToString("yyyy-MM-dd HH:mm:ss ffffff");
                 System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1)); // 当地时区
                 long stamp = (long)(dt - startTime).TotalMilliseconds; // 相差毫秒数
                 var postParam = new PostParam
@@ -215,10 +213,21 @@ namespace MCD_Tools
                 };
                 var postStr = JsonHelper.Serializer(postParam);
                 var resultJson = HttpHelper.Post("http://120.202.98.106:8990/ebsapi/organization/basreservation/public/updateSchedule", postStr);
-                var result=JsonHelper.DeserializeObject<PostResult>(resultJson);
-                if(result.code!=1016&& result.code != 1018 && result.code != 1023)
+
+                Log($"{dtStr}-{memberParam.Name}\r\n{resultJson}\r\n");
+                var result = JsonHelper.DeserializeObject<PostResult>(resultJson);
+                if (result.code == 1018)
                 {
-                    Console.WriteLine(dt.Date+$" {memberParam.Name}：{result.msg}");
+                    lock (lockObj)
+                    {
+                        okList.Add(memberParam.Name);
+                        Log(memberParam.Name + " -->已预约");
+                    }
+                }
+                if (result.code != 1016 && result.code != 1018 && result.code != 1023)
+                {
+                    var msg = dt.Date + $" {memberParam.Name} -->{result.msg}";
+                    SetOKtb(msg, dt);
                 }
                 /*
                  {"code":1016,"msg":"今日预约已达上限","data":null}
@@ -232,8 +241,46 @@ namespace MCD_Tools
             }
         }
 
+        private void SetOKtb(string name, DateTime dt)
+        {
+            lock (lockObj)
+            {
+                try
+                {
+                    var msg = name + " -->" + dt.ToString("yyyy-MM-dd HH：mm:ss ffffff");
+                    tbOK.AppendText(msg + "\r\n\r\n");
+                    Write("ok.txt", msg);
+                }
+                catch (Exception ex)
+                {
 
+                }
+            }
+        }
 
+        private void Log(string msg)
+        {
+            lock (lockObj)
+            {
+                try
+                {
+                    Console.WriteLine(msg);
+                    tbLog.AppendText($"{msg}\r\n");
+                    Write("log.txt", msg);
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+
+            //tbLog.Text = $"{DateTime.Now.ToString("HH:mm:ss")}--{result}----提交参数：{param.Name}-{dt.ToString("yyyy-MM-dd")} \r\n" + tbLog.Text;
+        }
+
+        public void Write(string path, string str)
+        {
+            File.AppendAllText(path, str + "\r\n");
+        }
 
 
         /// <summary>
@@ -242,19 +289,26 @@ namespace MCD_Tools
         /// <returns></returns>
         private VerifyCodeData GetVerifyCode()
         {
-            var param = new
+            try
             {
-                iamgeHeight = 32,
-                imageWidth = 100,
-                len = 4,
-                type = "0",
-            };
-            var str = JsonHelper.Serializer(param);
-            var base64 = HttpHelper.Post("http://120.202.98.106:8990/ebsapi/message/sendsms/makeVerifyCode", str);
-            var VerifyCode = JsonHelper.DeserializeObject<VerifyCode>(base64);
-            if (VerifyCode == null)
+                var param = new
+                {
+                    iamgeHeight = 32,
+                    imageWidth = 100,
+                    len = 4,
+                    type = "0",
+                };
+                var str = JsonHelper.Serializer(param);
+                var base64 = HttpHelper.Post("http://120.202.98.106:8990/ebsapi/message/sendsms/makeVerifyCode", str);
+                var VerifyCode = JsonHelper.DeserializeObject<VerifyCode>(base64);
+                if (VerifyCode == null)
+                    return null;
+                return VerifyCode.data;
+            }
+            catch (Exception ex)
+            {
                 return null;
-            return VerifyCode.data;
+            }
         }
 
 
@@ -292,41 +346,57 @@ namespace MCD_Tools
         private string postStrAA = "";
         private void button2_Click(object sender, EventArgs e)
         {
-            timer2.Interval = 3000;
-            timer2.Start();
+            //timer2.Interval = 3000;
+            //timer2.Start();
+            timer2.Stop();
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
-            cc++;
-            timer1.Stop();
-            var result = HttpHelper.Post("http://120.202.98.106:8990/ebsapi/organization/basreservation/public/updateSchedule", postStrAA);
-            Log($"=============分钟结束========\r\n {result}");
+            //cc++;
+            //timer1.Stop();
+            //var result = HttpHelper.Post("http://120.202.98.106:8990/ebsapi/organization/basreservation/public/updateSchedule", postStrAA);
+            //Log($"=============分钟结束========\r\n {result}");
         }
 
-        Random rd = new Random();
-        int cc = 0;
-
-        private void timer2_Tick(object sender, EventArgs e)
+        private void lvParam_DoubleClick(object sender, EventArgs e)
         {
+            if (lvParam.SelectedItems.Count == 0)
+                return;
+            try
+            {
+                var item = lvParam.SelectedItems[0];
+                var name = item.SubItems[1].Text;
+                if (okList.Contains(name))
+                {
+                    okList.Remove(name);
+                    item.ForeColor = Color.Black;
+                    return;
+                }
+                item.ForeColor = Color.Blue;
+                okList.Add(name);
+            }
+            catch (Exception ex)
+            {
 
-            //foreach (var item in taskList)
-            //{
-            //    new Task(() =>
-            //    {
-            //        Start(item);
-            //    }).Start();
-            //}
-
-            Console.WriteLine($"mmmmmmmmmm[{cc}次]mmmmmmmmmmmmm");
-
-
-            //foreach (var item in taskList)
-            //{
-            //    Thread t1 = new Thread(new ParameterizedThreadStart(Start));
-            //    t1.Start(item);
-            //    //Start(item);
-            //}
+            }
         }
+
+        public class Result
+        {
+            public string A { get; set; }
+            public string B { get; set; }
+            public string C { get; set; }
+            public Info D { get; set; }
+
+
+            public class Info
+            {
+                public string Q { get; set; }
+                public string W { get; set; }
+                public string E { get; set; }
+            }
+        }
+
     }
 
 }
