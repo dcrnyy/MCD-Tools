@@ -35,7 +35,6 @@
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btStart = new System.Windows.Forms.Button();
-            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.tbLog = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.lbCount = new System.Windows.Forms.Label();
@@ -44,6 +43,7 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.tbOK = new System.Windows.Forms.TextBox();
+            this.button3 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lvParam
@@ -86,20 +86,13 @@
             // 
             // btStart
             // 
-            this.btStart.Location = new System.Drawing.Point(489, 125);
+            this.btStart.Location = new System.Drawing.Point(489, 62);
             this.btStart.Name = "btStart";
-            this.btStart.Size = new System.Drawing.Size(127, 58);
+            this.btStart.Size = new System.Drawing.Size(127, 44);
             this.btStart.TabIndex = 1;
             this.btStart.Text = "启  动";
             this.btStart.UseVisualStyleBackColor = true;
             this.btStart.Click += new System.EventHandler(this.btStart_Click);
-            // 
-            // dateTimePicker1
-            // 
-            this.dateTimePicker1.Location = new System.Drawing.Point(489, 34);
-            this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(127, 21);
-            this.dateTimePicker1.TabIndex = 3;
             // 
             // tbLog
             // 
@@ -112,9 +105,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(489, 61);
+            this.button1.Location = new System.Drawing.Point(489, 12);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(127, 58);
+            this.button1.Size = new System.Drawing.Size(127, 44);
             this.button1.TabIndex = 5;
             this.button1.Text = "准  备";
             this.button1.UseVisualStyleBackColor = true;
@@ -138,9 +131,9 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(489, 189);
+            this.button2.Location = new System.Drawing.Point(489, 112);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(127, 58);
+            this.button2.Size = new System.Drawing.Size(127, 44);
             this.button2.TabIndex = 9;
             this.button2.Text = "测  试";
             this.button2.UseVisualStyleBackColor = true;
@@ -164,18 +157,28 @@
             this.tbOK.Size = new System.Drawing.Size(475, 232);
             this.tbOK.TabIndex = 11;
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(489, 162);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(127, 44);
+            this.button3.TabIndex = 12;
+            this.button3.Text = "查  询";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1109, 604);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.tbOK);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.lbTime);
             this.Controls.Add(this.lbCount);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tbLog);
-            this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.btStart);
             this.Controls.Add(this.lvParam);
             this.Name = "MainForm";
@@ -194,7 +197,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.Button btStart;
-        private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.TextBox tbLog;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label lbCount;
@@ -203,6 +205,7 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.TextBox tbOK;
+        private System.Windows.Forms.Button button3;
     }
 }
 

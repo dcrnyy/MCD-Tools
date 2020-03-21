@@ -21,14 +21,43 @@ namespace MCD_Tools
             CheckForIllegalCrossThreadCalls = false;
         }
 
+        /*
+        蒙威桦	45212219870906573X	18269063966
+        梁廷容	452122195206145734	19968336925
+        吴斯璞	452122198004261298	15078751336
+        何世洲	452122197904152711	13457919568
+        宾春英	45252819800529178X	18376856390
+        何世裕	452122197211202712	19152617607
+        何木	452122199108242715	18977120350
+        何昌注	452122196406022733	13324818024
+        黄志领	452122196203075739	13768648731
+        何增联	452122197003102717	15819381068
+        何振伸	452122196312144836	13457037037
+        何振佑	452122196610064850	13768600187
+        蒙大成	45212219890205571X	18934739405
+        王志耀	452122197703215739	13457909225
+        韦心伟	452122196905095734	13978192919
+        梁建鸿	452122198004104831	18178656862
+        */
+
         private List<MemberParam> memberList = new List<MemberParam>
         {
-            new MemberParam{Name="韦大宏",Phone="19654783325",IdNumber="110101199003076931"},
-            new MemberParam{Name="张三",Phone="19654783325",IdNumber="110101199003076931"},
-            new MemberParam{Name="李四",Phone="19654783325",IdNumber="110101199003076931"},
-            new MemberParam{Name="王五",Phone="19654783325",IdNumber="110101199003076931"},
-            new MemberParam{Name="马六",Phone="19654783325",IdNumber="110101199003076931"},
-
+            new MemberParam{Name="蒙威桦",IdNumber="45212219870906573X",Phone="18269063966"},
+            new MemberParam{Name="梁廷容",IdNumber="452122195206145734",Phone="19968336925"},
+            new MemberParam{Name="吴斯璞",IdNumber="452122198004261298",Phone="15078751336"},
+            new MemberParam{Name="何世洲",IdNumber="452122197904152711",Phone="13457919568"},
+            new MemberParam{Name="宾春英",IdNumber="45252819800529178X",Phone="18376856390"},
+            new MemberParam{Name="何世裕",IdNumber="452122197211202712",Phone="19152617607"},
+            new MemberParam{Name="何木",IdNumber="452122199108242715",Phone="18977120350"},
+            new MemberParam{Name="何昌注",IdNumber="452122196406022733",Phone="13324818024"},
+            new MemberParam{Name="黄志领",IdNumber="452122196203075739",Phone="13768648731"},
+            new MemberParam{Name="何增联",IdNumber="452122197003102717",Phone="15819381068"},
+            new MemberParam{Name="何振伸",IdNumber="452122196312144836",Phone="13457037037"},
+            new MemberParam{Name="何振佑",IdNumber="452122196610064850",Phone="13768600187"},
+            new MemberParam{Name="蒙大成",IdNumber="45212219890205571X",Phone="18934739405"},
+            new MemberParam{Name="王志耀",IdNumber="452122197703215739",Phone="13457909225"},
+            new MemberParam{Name="韦心伟",IdNumber="452122196905095734",Phone="13978192919"},
+            new MemberParam{Name="梁建鸿",IdNumber="452122198004104831",Phone="18178656862"},
         };
         private List<string> okList = new List<string>();
         private List<VerifyCodeData> verifyList = null;
@@ -48,14 +77,14 @@ namespace MCD_Tools
                 for (int n = 0; n < memberList.Count; n++)
                 {
                     var item = memberList[n];
-                    var lvi = new ListViewItem(n.ToString());
+                    var lvi = new ListViewItem((n+1).ToString());
                     lvi.SubItems.Add(item.Name);
                     lvi.SubItems.Add(item.IdNumber);
                     lvi.SubItems.Add(item.Phone);
                     lvi.Tag = item;
                     lvParam.Items.Add(lvi);
                 }
-                count = memberList.Count * 5 * 50;
+                count = memberList.Count * 2 * 50;
 
             }
             catch (Exception ex)
@@ -67,36 +96,39 @@ namespace MCD_Tools
 
         private void button1_Click(object sender, EventArgs e)
         {
-
-            //var dt = dateTimePicker1.Value;
             Read(count);
         }
 
         private void Read(int count)
         {
             //验证码有效时间3分钟
-            try
+
+            verifyList = new List<VerifyCodeData>();
+            for (int n = 0; n < count; n++)
             {
-                verifyList = new List<VerifyCodeData>();
-                for (int n = 0; n < count; n++)
+                new Task(() =>
                 {
-                    new Task(() =>
+                    //verifyList.Add(new VerifyCodeData { verifyCode = Guid.NewGuid().ToString() });
+                    //button1.Text = $"准  备({verifyList.Count})";
+
+                    try
                     {
-                        verifyList.Add(new VerifyCodeData { verifyCode = Guid.NewGuid().ToString() });
-                        button1.Text = $"准  备({verifyList.Count})";
-                        //var obj = GetVerifyCode();
-                        //if (obj != null)
-                        //{
-                        //    obj.Code = ttshituAPI.GetCode(obj.verifyCode);
-                        //    verifyList.Add(obj);
-                        //}
-                    }).Start();
-                }
-            }
-            catch (Exception ex)
-            {
+                        var obj = GetVerifyCode();
+                        if (obj != null)
+                        {
+                            obj.Code = ttshituAPI.GetCode(obj.verifyCode);
+                            verifyList.Add(obj);
+                            button1.Text = $"准  备({verifyList.Count})";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }).Start();
 
             }
+
         }
 
         private static object lockObj = new object();
@@ -124,7 +156,7 @@ namespace MCD_Tools
 
         private void btStart_Click(object sender, EventArgs e)
         {
-            dt = dateTimePicker1.Value;
+            dt = DateTime.Now;
             timer2.Interval = 120; //一秒钟大概7~8次
             timer2.Start();
 
@@ -156,30 +188,30 @@ namespace MCD_Tools
                         Start(item, verify, dt.AddDays(2).Date);
                     }
                 }).Start();
-                new Task(() =>
-                {
-                    var verify = GetVerifyCodeData();
-                    if (verify != null)
-                    {
-                        Start(item, verify, dt.AddDays(3).Date);
-                    }
-                }).Start();
-                new Task(() =>
-                {
-                    var verify = GetVerifyCodeData();
-                    if (verify != null)
-                    {
-                        Start(item, verify, dt.AddDays(4).Date);
-                    }
-                }).Start();
-                new Task(() =>
-                {
-                    var verify = GetVerifyCodeData();
-                    if (verify != null)
-                    {
-                        Start(item, verify, dt.AddDays(5).Date);
-                    }
-                }).Start();
+                //new Task(() =>
+                //{
+                //    var verify = GetVerifyCodeData();
+                //    if (verify != null)
+                //    {
+                //        Start(item, verify, dt.AddDays(3).Date);
+                //    }
+                //}).Start();
+                //new Task(() =>
+                //{
+                //    var verify = GetVerifyCodeData();
+                //    if (verify != null)
+                //    {
+                //        Start(item, verify, dt.AddDays(4).Date);
+                //    }
+                //}).Start();
+                //new Task(() =>
+                //{
+                //    var verify = GetVerifyCodeData();
+                //    if (verify != null)
+                //    {
+                //        Start(item, verify, dt.AddDays(5).Date);
+                //    }
+                //}).Start();
             }
             //Log("End");
         }
@@ -192,14 +224,14 @@ namespace MCD_Tools
         {
             try
             {
-                var json = "{\"code\":1016,\"msg\":\"今日预约已达上限\",\"data\":null}";
-                Log($"{memberParam.Name}--{json}");
-                var msg2 = dt + $" {memberParam.Name}：{json}";
-                SetOKtb(msg2, dt);
-                return;
+                //var json = "{\"code\":1016,\"msg\":\"今日预约已达上限\",\"data\":null}";
+                //Log($"{memberParam.Name}--{json}");
+                //var msg2 = dt + $" {memberParam.Name}：{json}";
+                //SetOKtb(msg2, dt);
+                //return;
 
 
-                var dtStr = dt.ToString("yyyy-MM-dd HH:mm:ss ffffff");
+
                 System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1)); // 当地时区
                 long stamp = (long)(dt - startTime).TotalMilliseconds; // 相差毫秒数
                 var postParam = new PostParam
@@ -212,6 +244,7 @@ namespace MCD_Tools
                     verifyCode = verify.Code,
                 };
                 var postStr = JsonHelper.Serializer(postParam);
+                var dtStr = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ffffff");
                 var resultJson = HttpHelper.Post("http://120.202.98.106:8990/ebsapi/organization/basreservation/public/updateSchedule", postStr);
 
                 Log($"{dtStr}-{memberParam.Name}\r\n{resultJson}\r\n");
@@ -232,7 +265,7 @@ namespace MCD_Tools
                 /*
                  {"code":1016,"msg":"今日预约已达上限","data":null}
                  {"code":1018,"msg":"已预约","data":null}
-                 {"code":1023,"msg":"未开始","data":null}
+                 {"code":1023,"msg":"未到预约开始时间","data":null}
                  */
             }
             catch (Exception ex)
@@ -347,8 +380,25 @@ namespace MCD_Tools
         private void button2_Click(object sender, EventArgs e)
         {
             //timer2.Interval = 3000;
-            //timer2.Start();
-            timer2.Stop();
+            if (timer2.Enabled)
+            {
+                timer2.Stop();
+                return;
+            }
+
+            var obj = GetVerifyCode();
+            if (obj == null)
+                return;
+
+            obj.Code = ttshituAPI.GetCode(obj.verifyCode);
+            verifyList = new List<VerifyCodeData> { obj };
+            var member = new MemberParam { Name = "韦大宏", Phone = "19654783325", IdNumber = "110101199003076931" };
+            var verify = GetVerifyCodeData();
+            if (verify != null)
+            {
+                Start(member, verify, DateTime.Now.AddDays(1).Date);
+            }
+
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -381,19 +431,66 @@ namespace MCD_Tools
             }
         }
 
-        public class Result
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
-            public string A { get; set; }
-            public string B { get; set; }
-            public string C { get; set; }
-            public Info D { get; set; }
 
+        }
 
-            public class Info
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (memberList == null || memberList.Count == 0)
+                return;
+            var dt = DateTime.Now;
+            Log("查询：");
+            foreach (var item in memberList)
             {
-                public string Q { get; set; }
-                public string W { get; set; }
-                public string E { get; set; }
+                System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1)); // 当地时区
+
+                new Task(() =>
+                {
+                    var dt1 = dt.AddDays(1).Date;
+                    try
+                    {
+
+                        long stamp1 = (long)(dt1 - startTime).TotalMilliseconds; // 相差毫秒数
+                        var param = new
+                        {
+                            idcard = item.IdNumber,
+                            reservationDate = stamp1,
+                        };
+
+                        var postStr1 = JsonHelper.Serializer(param);
+                        var result1 = HttpHelper.Post("http://120.202.98.106:8990/ebsapi/organization/basreservation/public/detail/get", postStr1);
+                        Log($"{item.Name}-->{dt1.ToString("yyyy-MM-dd")}\r\n{result1}\r\n");
+                    }
+                    catch (Exception ex)
+                    {
+                        Log($"{item.Name}-->{dt1.ToString("yyyy-MM-dd")}\r\n异常：{ex.Message}\r\n");
+                    }
+                }).Start();
+
+                new Task(() =>
+                {
+                    var dt2 = dt.AddDays(1).Date;
+                    try
+                    {
+
+                        long stamp2 = (long)(dt2 - startTime).TotalMilliseconds; // 相差毫秒数
+                        var param = new
+                        {
+                            idcard = item.IdNumber,
+                            reservationDate = stamp2,
+                        };
+
+                        var postStr2 = JsonHelper.Serializer(param);
+                        var result2 = HttpHelper.Post("http://120.202.98.106:8990/ebsapi/organization/basreservation/public/detail/get", postStr2);
+                        Log($"{item.Name}-->{dt2.ToString("yyyy-MM-dd")}\r\n{result2}\r\n");
+                    }
+                    catch (Exception ex)
+                    {
+                        Log($"{item.Name}-->{dt2.ToString("yyyy-MM-dd")}\r\n异常：{ex.Message}\r\n");
+                    }
+                }).Start();
             }
         }
 
